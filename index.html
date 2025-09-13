@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xây Dựng Khung Năng Lực Toàn Diện - Build Talents</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Oswald', sans-serif;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a237e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF9800;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e68a00;
+        }
+        .nav-link.active {
+            background-color: #FF9800;
+            color: #1a237e;
+            transform: translateX(10px);
+        }
+        .content-card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #009688;
+        }
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a237e;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #FF9800;
+        }
+        h3 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #5C6BC0;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .tab-container {
+            border: 2px dashed #5C6BC0;
+            background-color: #f0f2ff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .tab-btn.active {
+            background-color: #FF9800;
+            color: #1a237e;
+            border-color: #1a237e;
+        }
+        .tab-btn:not(.active) {
+            background-color: #fff;
+            color: #5C6BC0;
+        }
+        .tab-content {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ccc;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-container textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ccc;
+            margin-top: 0.5rem;
+            transition: all 0.3s;
+        }
+        .tab-container textarea:focus {
+            outline: none;
+            border-color: #FF9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
+        }
+        .example-content {
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        .example-content p {
+            margin-bottom: 0.5rem;
+        }
+        .example-content .font-semibold {
+            color: #009688;
+        }
+        .case-study {
+            background-color: #e0f2f1;
+            border-left: 5px solid #009688;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 0.5rem;
+        }
+        .pitfall {
+            background-color: #fff3e0;
+            border-left: 5px solid #FF9800;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 0.5rem;
+        }
+        /* Password Protection Styles */
+        #password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(26, 35, 126, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+        #password-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        #password-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ccc;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        #password-submit {
+            background-color: #FF9800;
+            color: #1a237e;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #password-submit:hover {
+            background-color: #e68a00;
+        }
+        #password-error {
+            color: red;
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Password Protection Overlay -->
+    <div id="password-overlay">
+        <div id="password-box">
+            <h2 class="text-2xl font-bold text-[#1a237e]">Yêu Cầu Truy Cập</h2>
+            <p class="text-gray-600 mt-2">Vui lòng nhập mật khẩu để xem nội dung.</p>
+            <form id="password-form">
+                <input type="password" id="password-input" placeholder="••••••••••">
+                <button type="submit" id="password-submit">Xác Nhận</button>
+            </form>
+            <p id="password-error">Mật khẩu không đúng. Vui lòng thử lại.</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app-container" style="display: none;">
+        <div class="flex min-h-screen">
+            <!-- Sidebar Navigation -->
+            <nav id="sidebar" class="w-80 bg-[#1a237e] text-white p-6 fixed h-full overflow-y-auto transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-[#FF9800]">BUILD TALENTS</h1>
+                    <p class="text-sm text-gray-300 mt-1">Khung Năng Lực Toàn Diện</p>
+                </div>
+                <ul class="space-y-2">
+                    <!-- Buổi 1 -->
+                    <li>
+                        <span class="font-bold text-lg text-[#009688]">Buổi 1: Nền Tảng Chiến Lược</span>
+                        <ul class="pl-4 mt-2 space-y-2 text-gray-300">
+                            <li><a href="#buoi1-muc-tieu" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Mục Tiêu & Bối Cảnh</a></li>
+                            <li><a href="#buoi1-tam-nhin" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Từ Tầm Nhìn Đến Năng Lực</a></li>
+                            <li><a href="#buoi1-mo-hinh" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Tổng Quan Các Mô Hình</a></li>
+                            <li><a href="#buoi1-ke-hoach" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Lập Kế Hoạch & Chứng Minh Giá Trị</a></li>
+                        </ul>
+                    </li>
+                    <!-- Buổi 2 -->
+                    <li>
+                        <span class="font-bold text-lg text-[#009688]">Buổi 2: Thiết Kế Kiến Trúc</span>
+                        <ul class="pl-4 mt-2 space-y-2 text-gray-300">
+                            <li><a href="#buoi2-kien-truc" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Kiến Trúc Năng Lực 4 Tầng</a></li>
+                            <li><a href="#buoi2-ho-so" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Xây Dựng Hồ Sơ Thành Công</a></li>
+                        </ul>
+                    </li>
+                    <!-- Buổi 3 -->
+                    <li>
+                        <span class="font-bold text-lg text-[#009688]">Buổi 3: Xây Dựng Từ Điển</span>
+                        <ul class="pl-4 mt-2 space-y-2 text-gray-300">
+                            <li><a href="#buoi3-giai-phau" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Giải Phẫu Một Năng Lực</a></li>
+                            <li><a href="#buoi3-viet" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Kỹ Thuật Viết Chỉ Số Hành Vi</a></li>
+                        </ul>
+                    </li>
+                    <!-- Buổi 4 -->
+                    <li>
+                        <span class="font-bold text-lg text-[#009688]">Buổi 4: Kích Hoạt & Đo Lường</span>
+                        <ul class="pl-4 mt-2 space-y-2 text-gray-300">
+                            <li><a href="#buoi4-tich-hop" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Tích Hợp Vào Vòng Đời Nhân Tài</a></li>
+                            <li><a href="#buoi4-quan-tri" class="nav-link block p-2 rounded-lg hover:bg-[#5C6BC0] transition-all duration-300">Quản Trị & Đo Lường</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Mobile Menu Button -->
+            <button id="menu-toggle" class="md:hidden fixed top-4 left-4 z-20 bg-[#FF9800] text-white p-2 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+
+            <!-- Main Content -->
+            <main id="main-content" class="flex-1 md:ml-80 p-6 md:p-10">
+                <header class="text-center mb-10">
+                    <h1 class="text-5xl font-extrabold text-[#1a237e]">CHƯƠNG TRÌNH ĐÀO TẠO CHUYÊN SÂU</h1>
+                    <p class="text-2xl text-[#5C6BC0] mt-2">XÂY DỰNG KHUNG NĂNG LỰC TOÀN DIỆN</p>
+                </header>
+
+                <!-- Buổi 1 -->
+                <section id="buoi1">
+                    <h2 id="buoi1-muc-tieu">Buổi 1: Nền Tảng Chiến Lược & Lập Kế Hoạch</h2>
+                    <div class="content-card">
+                        <h3>Bối Cảnh: Tại Sao Lại Là Bây Giờ? Thế Giới BANI</h3>
+                        <p>Thế giới đã chuyển từ VUCA (Biến động, Không chắc chắn, Phức tạp, Mơ hồ) sang BANI (Mong manh, Lo lắng, Phi tuyến, Khó hiểu). Trong bối cảnh này, sự linh hoạt và khả năng thích ứng của con người trở thành yếu tố sống còn. Năng lực không còn là một lựa chọn, mà là một mệnh lệnh chiến lược để tồn tại và phát triển.</p>
+                        <div class="mt-4 p-4 bg-[#f0f2ff] rounded-lg border-l-4 border-[#5C6BC0]">
+                            <p class="font-semibold text-[#1a237e]">Sự Dịch Chuyển Vai Trò Của Nhân Sự</p>
+                            <p>Từ <span class="font-bold text-[#FF9800]">Người Quản trị (Administrator)</span> sang <span class="font-bold text-[#009688]">Kiến trúc sư Nhân tài (Talent Architect)</span>: thiết kế trải nghiệm, xây dựng năng lực và thúc đẩy chiến lược.</p>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>Năng Lực là Lợi Thế Cạnh Tranh Bền Vững</h3>
+                        <p>Trong kỷ nguyên biến động, quy trình hay công nghệ có thể bị sao chép, nhưng năng lực tập thể của một tổ chức—văn hóa, khả năng hợp tác, sự linh hoạt—là tài sản độc nhất và khó bắt chước nhất.</p>
+                        <h4 class="font-semibold text-lg mt-4">Lợi Ích Có Thể Đo Lường Được:</h4>
+                        <div class="grid md:grid-cols-3 gap-4 text-center mt-2">
+                            <div class="p-4 bg-gray-100 rounded-lg">
+                                <p class="text-3xl font-bold text-[#009688]">20%</p>
+                                <p>Hiệu suất nhân viên cải thiện tại IBM.</p>
+                            </div>
+                            <div class="p-4 bg-gray-100 rounded-lg">
+                                <p class="text-3xl font-bold text-[#009688]">25%</p>
+                                <p>Điểm hài lòng của bệnh nhân tăng tại Mercy Health.</p>
+                            </div>
+                            <div class="p-4 bg-gray-100 rounded-lg">
+                                <p class="text-3xl font-bold text-[#009688]">45%</p>
+                                <p>Tỷ lệ nghỉ việc giảm tại một trung tâm y tế lớn.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card" id="buoi1-tam-nhin">
+                        <h3>Từ Tầm Nhìn Đến Năng Lực: Liên Kết Chiến Lược</h3>
+                        <p>Một khung năng lực không thể tồn tại biệt lập; nó phải là sự phản ánh sống động của chiến lược và bản sắc của tổ chức. Nếu không, nó chỉ là một bài tập học thuật vô nghĩa.</p>
+                        <div class="grid md:grid-cols-3 gap-6 mt-6 text-center">
+                            <div class="p-4 bg-gray-50 rounded-lg shadow">
+                                <h4 class="text-xl font-bold text-[#FF9800]">TẦM NHÌN (WHY)</h4>
+                                <p>Một khát vọng dài hạn, truyền cảm hứng.</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-lg shadow">
+                                <h4 class="text-xl font-bold text-[#009688]">SỨ MỆNH (HOW)</h4>
+                                <p>Mục đích hiện tại và cách thức đạt được tầm nhìn.</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-lg shadow">
+                                <h4 class="text-xl font-bold text-[#5C6BC0]">GIÁ TRỊ (RULES)</h4>
+                                <p>Những nguyên tắc không thể thương lượng, định hướng hành vi.</p>
+                            </div>
+                        </div>
+                        <div class="tab-container" data-tab-group="b1-ex1">
+                            <div class="flex space-x-2">
+                                <button class="tab-btn active" data-tab-target="bai-tap">Bài tập</button>
+                                <button class="tab-btn" data-tab-target="vi-du">Ví dụ mẫu</button>
+                            </div>
+                            <div class="tab-content active" data-tab-content="bai-tap">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Bài Tập Thực Hành: Phác Thảo Năng Lực Cốt Lõi</h4>
+                                <p>Dựa trên chiến lược của tổ chức bạn, hãy phác thảo các năng lực cốt lõi ban đầu.</p>
+                                <textarea rows="3" placeholder="Nhập Tầm nhìn của tổ chức bạn..."></textarea>
+                                <textarea rows="3" placeholder="Nhập Sứ mệnh..."></textarea>
+                                <textarea rows="3" placeholder="Nhập 3 Giá trị cốt lõi..."></textarea>
+                                <textarea rows="3" placeholder="Phác thảo 2-3 năng lực cốt lõi ban đầu..."></textarea>
+                            </div>
+                            <div class="tab-content" data-tab-content="vi-du">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Ví dụ từ NIKE</h4>
+                                <div class="example-content">
+                                    <p><span class="font-semibold">Tầm nhìn:</span> "Mang lại cảm hứng và sự đổi mới cho mọi vận động viên trên thế giới."</p>
+                                    <p><span class="font-semibold">Sứ mệnh:</span> "Làm mọi thứ có thể để mở rộng tiềm năng của con người."</p>
+                                    <p><span class="font-semibold">Giá trị:</span> "Đổi mới" (Innovation).</p>
+                                    <p><span class="font-semibold">Năng lực cốt lõi tương ứng:</span> "Tư duy Sáng tạo" (Creativity) và "Thúc đẩy Hành động" (Action-Oriented).</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pitfall">
+                            <h4 class="font-bold text-[#e68a00]">Cạm Bẫy Cần Tránh: Năng Lực Chung Chung</h4>
+                            <p>Nhiều tổ chức chọn các năng lực từ danh sách có sẵn như "chính trực" hay "hợp tác". Điều này không sai, nhưng để tạo lợi thế cạnh tranh, năng lực phải "hiếm" và "khó bắt chước". Sự khác biệt nằm ở CÁCH BẠN ĐỊNH NGHĨA và THỂ HIỆN năng lực đó trong bối cảnh riêng của tổ chức.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card" id="buoi1-mo-hinh">
+                        <h3>Tổng Quan Các Mô Hình Nền Tảng</h3>
+                        <p>Hãy đứng trên vai những người khổng lồ. Tham khảo từ các mô hình đã được công nhận là một bước đi khôn ngoan.</p>
+                        <div class="mt-4 space-y-4">
+                            <div class="p-4 border rounded-lg">
+                                <h4 class="font-bold text-[#1a237e]">KORN FERRY</h4>
+                                <p>Gồm 38 năng lực nhóm thành 4 yếu tố: Tư duy, Kết quả, Con người, Bản thân. Mạnh về phân tích và dự báo thành công.</p>
+                            </div>
+                            <div class="p-4 border rounded-lg">
+                                <h4 class="font-bold text-[#1a237e]">SHRM</h4>
+                                <p>Cấu trúc rõ ràng với 9 năng lực hành vi và 1 năng lực kỹ thuật, phân tầng theo 4 cấp độ sự nghiệp. Tốt để xây dựng lộ trình phát triển.</p>
+                            </div>
+                            <div class="p-4 border rounded-lg">
+                                <h4 class="font-bold text-[#1a237e]">AON</h4>
+                                <p>Tập trung vào các yếu tố dự báo tiềm năng: Năng lực (Ability), Khát vọng (Aspiration), và Sự linh hoạt (Agility). Nhấn mạnh sự sẵn sàng cho tương lai.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card" id="buoi1-ke-hoach">
+                        <h3>Lập Kế Hoạch & Chứng Minh Giá Trị: "Case for Change"</h3>
+                        <p>Đây là tài liệu cốt lõi để bạn "bán" ý tưởng cho ban lãnh đạo. Nó phải trả lời rõ ràng câu hỏi "Tại sao chúng ta phải làm điều này, ngay bây giờ?".</p>
+                        <div class="tab-container" data-tab-group="b1-ex2">
+                            <div class="flex space-x-2">
+                                <button class="tab-btn active" data-tab-target="bai-tap">Bài tập</button>
+                                <button class="tab-btn" data-tab-target="vi-du">Ví dụ mẫu</button>
+                            </div>
+                            <div class="tab-content active" data-tab-content="bai-tap">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Bài Tập Thực Hành: Xây Dựng "Case for Change"</h4>
+                                <p>Phác thảo các gạch đầu dòng chính để thuyết phục ban lãnh đạo. Tập trung vào lợi ích kinh doanh.</p>
+                                <textarea rows="3" placeholder="1. Vấn đề/Thách thức hiện tại (VD: Tỷ lệ nghỉ việc cao, khó tuyển đúng người...)"></textarea>
+                                <textarea rows="3" placeholder="2. Giải pháp đề xuất (VD: Xây dựng và triển khai khung năng lực toàn diện...)"></textarea>
+                                <textarea rows="3" placeholder="3. Lợi ích kinh doanh kỳ vọng (VD: Giảm chi phí tuyển dụng 10%, tăng tỷ lệ giữ chân nhân tài 15%...)"></textarea>
+                            </div>
+                            <div class="tab-content" data-tab-content="vi-du">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Ví dụ "Case for Change"</h4>
+                                <div class="example-content">
+                                    <p><span class="font-semibold">1. Vấn đề:</span> Tỷ lệ nghỉ việc của nhân viên kinh doanh có kinh nghiệm trong 1 năm đầu là 35%, gây tốn kém chi phí tuyển dụng (>1 tỷ VNĐ/năm) và ảnh hưởng trực tiếp đến doanh số.</p>
+                                    <p><span class="font-semibold">2. Giải pháp:</span> Xây dựng và áp dụng khung năng lực cho vai trò kinh doanh để cải thiện việc tuyển dụng đúng người, đào tạo hội nhập hiệu quả và quản lý hiệu suất nhất quán.</p>
+                                    <p><span class="font-semibold">3. Lợi ích kỳ vọng:</span> Giảm tỷ lệ nghỉ việc xuống 20% trong năm đầu tiên, tiết kiệm 500 triệu VNĐ chi phí tuyển dụng, và tăng 10% hiệu suất bán hàng trung bình của nhân viên mới.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="case-study">
+                        <h4 class="font-bold text-xl text-[#00695c]">Case Study: Microsoft</h4>
+                        <p>Dưới sự lãnh đạo của Satya Nadella, Microsoft đã thực hiện một cuộc chuyển đổi văn hóa ngoạn mục. Họ đã thay đổi khung năng lực của mình, chuyển từ việc tập trung vào cạnh tranh nội bộ sang các năng lực như "Tư duy Phát triển" (Growth Mindset), "Lấy khách hàng làm trung tâm" và "Một Microsoft" (One Microsoft). Sự thay đổi về khung năng lực là nền tảng cho sự trỗi dậy mạnh mẽ của họ.</p>
+                    </div>
+                </section>
+                
+                <!-- Buổi 2 -->
+                <section id="buoi2" class="mt-16">
+                    <h2 id="buoi2-kien-truc">Buổi 2: Thiết Kế Kiến Trúc & Hồ Sơ Thành Công</h2>
+                    <div class="content-card">
+                        <h3>Kiến Trúc Năng Lực 4 Tầng</h3>
+                        <p>Một cấu trúc logic và toàn diện, giúp phân loại và áp dụng năng lực một cách hệ thống trên toàn tổ chức.</p>
+                        <div class="mt-6 space-y-4">
+                            <div class="p-5 rounded-lg bg-[#f0f2ff]">
+                                <h4 class="text-xl font-bold text-[#1a237e]">Tầng 1: Năng Lực CỐT LÕI (Core)</h4>
+                                <p>Là "DNA" của tổ chức, phản ánh giá trị và văn hóa, áp dụng cho MỌI nhân viên. (VD: Chính trực, Hợp tác, Lấy khách hàng làm trung tâm).</p>
+                            </div>
+                            <div class="p-5 rounded-lg bg-[#e0f2f1]">
+                                <h4 class="text-xl font-bold text-[#009688]">Tầng 2: Năng Lực LÃNH ĐẠO (Leadership)</h4>
+                                <p>Năng lực cần thiết để dẫn dắt, truyền cảm hứng và phát triển đội ngũ, được phân tầng theo cấp bậc. (VD: Tư duy Chiến lược, Phát triển Nhân tài).</p>
+                            </div>
+                            <div class="p-5 rounded-lg bg-[#fff3e0]">
+                                <h4 class="text-xl font-bold text-[#FF9800]">Tầng 3: Năng Lực CHUYÊN MÔN (Functional)</h4>
+                                <p>Kiến thức và kỹ năng đặc thù cho một lĩnh vực, phòng ban cụ thể. (VD: Tài chính: Phân tích Báo cáo Tài chính).</p>
+                            </div>
+                            <div class="p-5 rounded-lg bg-gray-100">
+                                <h4 class="text-xl font-bold text-gray-700">Tầng 4: Năng Lực HÀNH VI (Behavioral)</h4>
+                                <p>Mô tả "cách thức" một cá nhân áp dụng kiến thức và kỹ năng. Thường được lồng ghép dưới dạng "chỉ số hành vi".</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card" id="buoi2-ho-so">
+                        <h3>Xây Dựng Hồ Sơ Thành Công</h3>
+                        <p>Là sự kết hợp độc đáo của các năng lực để mô tả hình mẫu nhân viên xuất sắc (star performer) cho một vai trò cụ thể.</p>
+                        <h4 class="text-lg font-bold text-[#1a237e] mt-4">Kỹ Thuật Trọng Tâm: Phỏng Vấn Sự Kiện Quan Trọng (BEI)</h4>
+                        <p>Phỏng vấn những người làm tốt nhất và quản lý của họ. Sử dụng phương pháp STAR để khai thác các ví dụ cụ thể.</p>
+                        <div class="mt-4 p-4 border-2 border-dashed border-[#009688] rounded-lg">
+                            <p class="font-bold">Phương pháp STAR:</p>
+                            <ul class="list-disc list-inside">
+                                <li><span class="font-semibold">S</span>ituation (Tình huống)</li>
+                                <li><span class="font-semibold">T</span>ask (Nhiệm vụ)</li>
+                                <li><span class="font-semibold">A</span>ction (Hành động)</li>
+                                <li><span class="font-semibold">R</span>esult (Kết quả)</li>
+                            </ul>
+                        </div>
+                        <div class="tab-container" data-tab-group="b2-ex1">
+                            <div class="flex space-x-2">
+                                <button class="tab-btn active" data-tab-target="bai-tap">Bài tập</button>
+                                <button class="tab-btn" data-tab-target="vi-du">Ví dụ mẫu</button>
+                            </div>
+                            <div class="tab-content active" data-tab-content="bai-tap">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Bài Tập Về Nhà: Xây Dựng Hồ Sơ Năng Lực Đầu Tiên</h4>
+                                <p>Chọn một vai trò trọng yếu tại tổ chức và phác thảo Hồ sơ Năng lực cho vai trò đó.</p>
+                                <textarea rows="2" placeholder="Tên vai trò trọng yếu..."></textarea>
+                                <textarea rows="3" placeholder="Danh sách các năng lực cần thiết (Cốt lõi, Lãnh đạo, Chuyên môn)..."></textarea>
+                                <textarea rows="4" placeholder="Ba câu hỏi phỏng vấn BEI cho một năng lực quan trọng nhất..."></textarea>
+                            </div>
+                            <div class="tab-content" data-tab-content="vi-du">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Ví dụ Hồ sơ năng lực</h4>
+                                <div class="example-content">
+                                    <p><span class="font-semibold">Vai trò trọng yếu:</span> Trưởng phòng Marketing</p>
+                                    <p><span class="font-semibold">Năng lực cần thiết:</span></p>
+                                    <ul class="list-disc list-inside ml-4">
+                                        <li>Cốt lõi: Lấy khách hàng làm trung tâm.</li>
+                                        <li>Lãnh đạo: Phát triển Nhân tài, Tư duy Chiến lược.</li>
+                                        <li>Chuyên môn: Digital Marketing, Quản trị Thương hiệu.</li>
+                                    </ul>
+                                    <p class="mt-2"><span class="font-semibold">Câu hỏi BEI (cho năng lực "Phát triển Nhân tài"):</span> "Hãy kể về một lần bạn đã giúp một nhân viên trong nhóm phát triển một kỹ năng quan trọng mà họ còn yếu. Bạn đã làm cụ thể những gì và kết quả ra sao?"</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pitfall">
+                            <h4 class="font-bold text-[#e68a00]">Cạm Bẫy Cần Tránh: Quá Nhiều Năng Lực</h4>
+                            <p>Một Hồ sơ Thành công hiệu quả nên tập trung vào 8-12 năng lực quan trọng nhất. Quá nhiều năng lực sẽ làm loãng sự tập trung và gây khó khăn cho việc đánh giá và phát triển.</p>
+                        </div>
+                    </div>
+                    <div class="case-study">
+                        <h4 class="font-bold text-xl text-[#00695c]">Case Study: Google & Project Oxygen</h4>
+                        <p>Nghiên cứu "Project Oxygen" của Google đã xác định các hành vi quan trọng nhất của một nhà quản lý xuất sắc, bao gồm "Là một người huấn luyện tốt" và "Trao quyền cho đội nhóm, không quản lý vi mô". Những hành vi này đã trở thành nền tảng cho Hồ sơ Thành công của các nhà quản lý tại Google.</p>
+                    </div>
+                </section>
+                
+                <!-- Buổi 3 -->
+                <section id="buoi3" class="mt-16">
+                    <h2 id="buoi3-giai-phau">Buổi 3: Xây Dựng Từ Điển Năng Lực</h2>
+                    <div class="content-card">
+                        <h3>Giải Phẫu Một Năng Lực: 5 Thành Phần Cốt Lõi</h3>
+                        <p>Để đảm bảo sự rõ ràng, mỗi năng lực trong từ điển cần được định nghĩa theo một cấu trúc chuẩn hóa.</p>
+                        <ol class="list-decimal list-inside space-y-3 mt-4 text-lg">
+                            <li><span class="font-semibold text-[#1a237e]">Tên Năng Lực:</span> Ngắn gọn, súc tích, dễ nhớ.</li>
+                            <li><span class="font-semibold text-[#1a237e]">Định Nghĩa:</span> Mô tả rõ ràng ý nghĩa của năng lực.</li>
+                            <li><span class="font-semibold text-[#1a237e]">Nhóm Năng Lực:</span> Phân loại vào kiến trúc 4 tầng.</li>
+                            <li><span class="font-semibold text-[#1a237e]">Các Cấp Độ Thành Thạo:</span> Thang đo 5 cấp độ mô tả sự tiến bộ.</li>
+                            <li><span class="font-semibold text-[#1a237e]">Chỉ Số Hành Vi (Behavioral Indicators):</span> Thành phần quan trọng nhất, làm cho năng lực trở nên hữu hình và đo lường được.</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="content-card" id="buoi3-viet">
+                        <h3>Kỹ Thuật Viết Chỉ Số Hành Vi (Theo 5 Cấp Độ)</h3>
+                        <p>Đây là phần "thịt" của từ điển. Các chỉ số này phải cụ thể, có thể quan sát, bắt đầu bằng động từ hành động, và phân biệt rõ ràng giữa các cấp độ.</p>
+                        <div class="mt-4 p-4 bg-[#fff3e0] rounded-lg border-l-4 border-[#FF9800]">
+                            <p class="font-semibold text-[#e68a00]">Nguyên Tắc Vàng (BARS):</p>
+                            <p>Mỗi điểm trên thang đánh giá phải được "neo" (Anchored) bởi một mô tả hành vi (Behaviorally) cụ thể.</p>
+                        </div>
+                        <div class="tab-container" data-tab-group="b3-ex1">
+                            <div class="flex space-x-2">
+                                <button class="tab-btn active" data-tab-target="bai-tap">Bài tập</button>
+                                <button class="tab-btn" data-tab-target="vi-du">Ví dụ mẫu</button>
+                            </div>
+                            <div class="tab-content active" data-tab-content="bai-tap">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Workshop: Viết Từ điển Năng lực "Giao Tiếp Hiệu Quả"</h4>
+                                <p>Thực hành viết các chỉ số hành vi cho 5 cấp độ của năng lực này.</p>
+                                <textarea rows="2" placeholder="Cấp 1 (Nền tảng): VD: Lắng nghe ý kiến của người khác một cách tôn trọng."></textarea>
+                                <textarea rows="2" placeholder="Cấp 2 (Đang phát triển): VD: Đặt câu hỏi để làm rõ quan điểm của người khác."></textarea>
+                                <textarea rows="2" placeholder="Cấp 3 (Thành thạo): VD: Trình bày thông tin một cách rõ ràng, phù hợp với đối tượng."></textarea>
+                                <textarea rows="2" placeholder="Cấp 4 (Nâng cao): VD: Huấn luyện người khác về kỹ năng giao tiếp."></textarea>
+                                <textarea rows="2" placeholder="Cấp 5 (Chuyên gia): VD: Xây dựng và dẫn dắt chiến lược truyền thông cho các dự án phức tạp."></textarea>
+                            </div>
+                            <div class="tab-content" data-tab-content="vi-du">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Ví dụ Chỉ số hành vi cho "Hợp Tác & Làm Việc Nhóm"</h4>
+                                <div class="example-content">
+                                    <p><span class="font-semibold">Cấp 1 (Nền tảng):</span> Tham gia vào các cuộc thảo luận của nhóm khi được yêu cầu, chia sẻ thông tin cơ bản.</p>
+                                    <p><span class="font-semibold">Cấp 2 (Đang phát triển):</span> Chủ động chia sẻ thông tin, kiến thức, đề nghị giúp đỡ đồng nghiệp.</p>
+                                    <p><span class="font-semibold">Cấp 3 (Thành thạo):</span> Xây dựng và duy trì mối quan hệ tích cực, hợp tác hiệu quả để đạt mục tiêu chung.</p>
+                                    <p><span class="font-semibold">Cấp 4 (Nâng cao):</span> Thúc đẩy môi trường làm việc cởi mở, phá vỡ rào cản giữa các phòng ban, huấn luyện người khác.</p>
+                                    <p><span class="font-semibold">Cấp 5 (Chuyên gia):</span> Xây dựng các liên minh chiến lược, dẫn dắt các sáng kiến về văn hóa hợp tác trên quy mô lớn.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pitfall">
+                            <h4 class="font-bold text-[#e68a00]">Cạm Bẫy Cần Tránh: Ngôn Ngữ Phức Tạp</h4>
+                            <p>Tránh sử dụng các thuật ngữ nhân sự hoặc ngôn ngữ học thuật. Từ điển năng lực phải được viết bằng ngôn ngữ đơn giản, rõ ràng để mọi nhân viên đều có thể hiểu và áp dụng.</p>
+                        </div>
+                    </div>
+                    <div class="case-study">
+                        <h4 class="font-bold text-xl text-[#00695c]">Case Study: Shell</h4>
+                        <p>Shell đã xây dựng một từ điển năng lực chi tiết cho các vai trò kỹ thuật và lãnh đạo trên toàn cầu. Điều này giúp họ đảm bảo một tiêu chuẩn nhất quán về năng lực, bất kể nhân viên làm việc ở quốc gia nào, và tạo điều kiện cho việc luân chuyển nhân tài quốc tế.</p>
+                    </div>
+                </section>
+
+                <!-- Buổi 4 -->
+                <section id="buoi4" class="mt-16">
+                    <h2 id="buoi4-tich-hop">Buổi 4: Kích Hoạt, Quản Trị & Đo Lường</h2>
+                    <div class="content-card">
+                        <h3>Tích Hợp Khung Năng Lực Vào Vòng Đời Nhân Tài</h3>
+                        <p>Sức mạnh của khung năng lực chỉ được giải phóng khi nó trở thành "sợi chỉ đỏ" xuyên suốt, kết nối tất cả các quy trình nhân sự thành một hệ thống nhất quán.</p>
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <div class="p-4 bg-gray-50 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#009688]">Tuyển Dụng</h4>
+                                <p>Sử dụng mô tả công việc và câu hỏi phỏng vấn dựa trên năng lực.</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#009688]">Đánh Giá Hiệu Suất</h4>
+                                <p>Đo lường cả "CÁI GÌ" (Kết quả) và "CÁCH THỨC" (Năng lực).</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#009688]">Phát Triển & Đào Tạo</h4>
+                                <p>Thiết kế các hoạt động phát triển có mục tiêu theo mô hình 70-20-10.</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-lg shadow-md">
+                                <h4 class="font-bold text-[#009688]">Kế Hoạch Kế Nhiệm</h4>
+                                <p>Sử dụng ma trận 9 ô (9-Box Grid) để xác định và phát triển nhân tài.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-card" id="buoi4-quan-tri">
+                        <h3>Quản Trị, Truyền Thông & Đo Lường Hiệu Quả</h3>
+                        <p>Xây dựng khung năng lực không phải là một dự án một lần. Để nó mang lại giá trị bền vững, cần có một hệ thống quản trị và cải tiến không ngừng.</p>
+                        <h4 class="text-lg font-bold text-[#1a237e] mt-4">Mô Hình Quản Lý Sự Thay Đổi ADKAR</h4>
+                        <ul class="list-disc list-inside space-y-2 mt-2">
+                            <li><span class="font-semibold">Awareness:</span> Nhận thức về sự cần thiết phải thay đổi.</li>
+                            <li><span class="font-semibold">Desire:</span> Mong muốn tham gia và ủng hộ sự thay đổi.</li>
+                            <li><span class="font-semibold">Knowledge:</span> Kiến thức về cách thay đổi.</li>
+                            <li><span class="font-semibold">Ability:</span> Khả năng thực hiện các kỹ năng và hành vi mới.</li>
+                            <li><span class="font-semibold">Reinforcement:</span> Củng cố để duy trì sự thay đổi.</li>
+                        </ul>
+                        <h4 class="text-lg font-bold text-[#1a237e] mt-4">Các Chỉ Số Đo Lường Hiệu Quả (Metrics)</h4>
+                        <ul class="list-disc list-inside space-y-2 mt-2">
+                            <li><span class="font-semibold">Định lượng:</span> Tỷ lệ giữ chân nhân tài, Tỷ lệ thăng tiến nội bộ, Năng suất lao động.</li>
+                            <li><span class="font-semibold">Định tính:</span> Mức độ gắn kết của nhân viên, Chất lượng các cuộc đối thoại hiệu suất.</li>
+                        </ul>
+                        <div class="tab-container" data-tab-group="b4-ex1">
+                            <div class="flex space-x-2">
+                                <button class="tab-btn active" data-tab-target="bai-tap">Bài tập</button>
+                                <button class="tab-btn" data-tab-target="vi-du">Ví dụ mẫu</button>
+                            </div>
+                            <div class="tab-content active" data-tab-content="bai-tap">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Bài Tập: Lập Kế Hoạch Hành Động 30-60-90 Ngày</h4>
+                                <p>Một hành động cụ thể bạn sẽ làm là gì để bắt đầu hoặc thúc đẩy dự án tại tổ chức của mình?</p>
+                                <textarea rows="2" placeholder="Trong 30 ngày tới..."></textarea>
+                                <textarea rows="2" placeholder="Trong 60 ngày tới..."></textarea>
+                                <textarea rows="2" placeholder="Trong 90 ngày tới..."></textarea>
+                            </div>
+                            <div class="tab-content" data-tab-content="vi-du">
+                                <h4 class="text-lg font-bold text-[#1a237e]">Ví dụ Kế hoạch hành động</h4>
+                                <div class="example-content">
+                                    <p><span class="font-semibold">30 ngày tới:</span> Hoàn thiện và trình bày "Case for Change" cho ban lãnh đạo để có được sự chấp thuận. Thành lập đội ngũ dự án đa chức năng.</p>
+                                    <p><span class="font-semibold">60 ngày tới:</span> Tổ chức workshop với các trưởng phòng ban chủ chốt để xác định và thống nhất các năng lực cốt lõi và năng lực lãnh đạo.</p>
+                                    <p><span class="font-semibold">90 ngày tới:</span> Bắt đầu xây dựng Hồ sơ Thành công chi tiết cho 2 vai trò trọng yếu đã được xác định (VD: Trưởng phòng Kinh doanh, Chuyên viên Công nghệ Cấp cao).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="case-study">
+                        <h4 class="font-bold text-xl text-[#00695c]">Case Study: IBM & Kỷ Nguyên AI</h4>
+                        <p>IBM đã tái cấu trúc lại khung năng lực của mình để tập trung vào các kỹ năng cần thiết cho kỷ nguyên AI, bao gồm các năng lực như "Tư duy Phân tích", "Hợp tác với Máy móc" và "Đạo đức AI". Họ đang chủ động xây dựng lực lượng lao động cho tương lai.</p>
+                    </div>
+                </section>
+                
+                <footer class="text-center mt-16 py-6 border-t-2 border-[#5C6BC0]">
+                    <p class="text-[#1a237e] font-semibold">Học Liệu cho đào tạo. Bản quyền thuộc Rosie Đào Hạnh Giang CEO Build Talents</p>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Password Protection Logic ---
+            const passwordOverlay = document.getElementById('password-overlay');
+            const passwordForm = document.getElementById('password-form');
+            const passwordInput = document.getElementById('password-input');
+            const passwordError = document.getElementById('password-error');
+            const appContainer = document.getElementById('app-container');
+
+            // BẠN CÓ THỂ THAY ĐỔI MẬT KHẨU TẠI ĐÂY
+            const correctPassword = 'buildtalents'; 
+
+            passwordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (passwordInput.value === correctPassword) {
+                    passwordOverlay.style.display = 'none';
+                    appContainer.style.display = 'block';
+                } else {
+                    passwordError.style.display = 'block';
+                    passwordInput.value = '';
+                }
+            });
+
+            // --- Main App Logic ---
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const mainContent = document.getElementById('main-content');
+            
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+            
+            mainContent.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+            });
+
+            // Active link highlighting on scroll
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const activeId = entry.target.id;
+                        const activeLink = document.querySelector(`.nav-link[href="#${activeId}"]`);
+                        
+                        if (activeLink) {
+                            navLinks.forEach(link => link.classList.remove('active'));
+                            activeLink.classList.add('active');
+                        }
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px", threshold: 0 });
+
+            sections.forEach(section => {
+                 const header = section.querySelector('h2');
+                 if (header) {
+                    observer.observe(header);
+                 }
+            });
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                   if (window.innerWidth < 768) { // md breakpoint
+                       sidebar.classList.add('-translate-x-full');
+                   }
+                });
+            });
+
+            // Tab functionality
+            const tabContainers = document.querySelectorAll('.tab-container');
+            tabContainers.forEach(container => {
+                const tabButtons = container.querySelectorAll('.tab-btn');
+                const tabContents = container.querySelectorAll('.tab-content');
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const target = button.dataset.tabTarget;
+
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        tabContents.forEach(content => {
+                            if (content.dataset.tabContent === target) {
+                                content.classList.add('active');
+                            } else {
+                                content.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+" selected in the Canvas.
+
